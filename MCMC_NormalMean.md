@@ -20,7 +20,7 @@ data                                               # Print our sample to the scr
 Now that we have some data, we need to assign prior probability distributions to our model parameters and figure out how to calculate the likelihood. For our purposes, we will make the assumption that our true mean has uniform probability of being between 0 and 50, while the standard deviation has a uniform probability of being between 0 and 4. In this toy case, we will not specify how we came to these decisions, but for analyses of empirical data we would need to use outside information to set reasonable limits on the range of possible values for these parameters.
 
 ```
-# Mean has a Uniform(0,50) prior
+# Mean has a Uniform(0,20) prior
 # Standard deviation has a Uniform (0,4) prior
 ```
 
@@ -72,17 +72,17 @@ Recall that the general outline of each Metropolis-Hastings step is:
 As an exercise, add your own pseudocode to label the steps in the Metropolis-Hastings algorithm below.
 
 ```
-numGens = 3000
+numGens = 1000
 for (gen in 1:numGens){
     
-    if (gen % 500 == 0){
+    if (gen % 50 == 0){
         print(gen)
     }
     
     currLike <- calcLike(data,m[gen],sd[gen])
     
-    propMean <- rnorm(1,m[gen],1)
-    propSD <- rnorm(1,sd[gen],1)
+    propMean <- rnorm(1,m[gen],0.3)
+    propSD <- rnorm(1,sd[gen],0.3)
     propLike <- calcLike(data,propMean[1],propSD[1])
     
     LR <- (propLike-currLike)
@@ -109,9 +109,11 @@ for (gen in 1:numGens){
         sd.append(sd[gen])
     }
     
+    write(gen,m[m.size()],sd[sd.size()],"\n",filename="params.txt",append=TRUE,separator="\t")
+    
 }
 
-burnin = 1000
+burnin = 100
 
 posteriorMean = 0.0
 for (i in burnin:numGens){
